@@ -28,6 +28,7 @@ import com.aur3liux.brohelapp.factory.LoginViewmodelFactory
 import com.aur3liux.brohelapp.repository.AuthRepository
 import com.aur3liux.brohelapp.repository.SesionRepository
 import com.aur3liux.brohelapp.view.components.CustomInput
+import com.aur3liux.brohelapp.view.components.PasswordInput
 import com.aur3liux.brohelapp.view.components.PoliticaPrivacidad
 import com.aur3liux.brohelapp.viewmodel.AuthViewModel
 import kotlinx.coroutines.GlobalScope
@@ -110,7 +111,7 @@ fun Login(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            CustomInput(
+            PasswordInput(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
@@ -123,7 +124,6 @@ fun Login(navController: NavController) {
 
                     }
                 ),
-                traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
                 imeAction = ImeAction.Next,
                 maxLenght = 40,
             )
