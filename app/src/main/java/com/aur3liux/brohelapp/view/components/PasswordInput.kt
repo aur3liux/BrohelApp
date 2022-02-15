@@ -45,10 +45,17 @@ fun PasswordInput(modifier: Modifier = Modifier,
     var passwordVisibility = remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.background(backgroundColor).fillMaxWidth(),
+        placeholder = {
+            Text(
+                text = textLabel,
+                color = Color.White,
+                fontSize = 16.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = Color.Black,
-            backgroundColor = Color.White,
             placeholderColor = MaterialTheme.colors.primaryVariant,
             disabledPlaceholderColor = MaterialTheme.colors.primary,
             unfocusedBorderColor = MaterialTheme.colors.primaryVariant,
