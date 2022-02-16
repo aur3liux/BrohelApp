@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -35,7 +37,7 @@ import kotlinx.coroutines.delay
 
 //Definicion de rutas para las VISTAS
 sealed class InitScreens(var route: String){
-    object SPLASH_SCREEN: InitScreens("SplashScreen")
+    object SPLASH_SCREEN: InitScreens("splash_screen")
     object CHECK_SESION_STATE: InitScreens("check_sesion_state")
 }
 
@@ -63,9 +65,6 @@ class MainActivity : ComponentActivity() {
                             sessionViewModel = sessionViewModel)
                     }
                 }//NavHost
-
-               checkSesionstate(
-                   sessionViewModel = sessionViewModel)
             }
         }
     }
@@ -101,19 +100,21 @@ fun SplashScreen(navController: NavController) {
                     OvershootInterpolator(4f).getInterpolation(it)
                 })
         )
-        delay(3000)
-        navController.navigate(InitScreens.CHECK_SESION_STATE.route)
+        delay(500L)
+        navController.navigate(InitScreens.CHECK_SESION_STATE.route){
+            popUpTo(InitScreens.SPLASH_SCREEN.route){inclusive = true}
+        }
     }
     //Contenido del splash Screen
     Column(modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-        Image(painter = painterResource(id = R.drawable.logo_brohel),
-            contentDescription = "",
-            modifier = Modifier.scale(scale.value))
-        Text("BROHEL",
-            color = MaterialTheme.colors.surface,
-            fontSize = 21.sp)
+            Image(painter = painterResource(id = R.drawable.logo_brohel),
+                contentDescription = "",
+                modifier = Modifier.scale(scale.value))
+            Text("BROHEL",
+                color = MaterialTheme.colors.primary,
+                fontSize = 21.sp)
     }
 }
 

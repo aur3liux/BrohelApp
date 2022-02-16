@@ -1,5 +1,7 @@
 package com.aur3liux.brohelapp.view
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +44,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Login(navController: NavController) {
 
@@ -74,93 +77,112 @@ fun Login(navController: NavController) {
         },
         scaffoldState = scaffoldState) {
             val image: Painter = painterResource(id = R.drawable.background_paisaje)
+
+        //Retardo para el efecto de desplazamiento hacia arriba
+        var visible by remember{ mutableStateOf(false)}
+        LaunchedEffect(key1 = Unit, block = {
+            delay(100)
+            visible = true
+        } )
+
+
         //Fondo de la pantalla con imagen de fondo
         Box(
-                contentAlignment = Alignment.BottomCenter,
-                content = {
+            contentAlignment = Alignment.BottomCenter,
+            content = {
                 Image(
                     painter = image,
                     contentDescription = "",
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.fillMaxHeight(),
                 )
-
-                    //Tarjeta con esquinas redondeadas para pedir datos
-                    Card(
-                        modifier = Modifier.height(500.dp),
-                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.7f),
-                        elevation = 4.dp,
-                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Bienvenido",
-                                style = MaterialTheme.typography.h4,
-                                color = Color.Black
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Ingresa tus credenciales",
-                                style = MaterialTheme.typography.h2,
-                                color = Color.Black
-                            )
-
-                            Spacer(modifier = Modifier.height(30.dp))
-                            /********** EMAIL */
-                            CustomInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Correo electrónico",
-                                textValue = correo,
-                                backgroundColor = MaterialTheme.colors.surface,
-                                keyboardType = KeyboardType.Email,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }),
-                                traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
-
-                            Spacer(modifier = Modifier.height(10.dp))
-                            /********** PASSWORD */
-                            PasswordInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Password",
-                                textValue = password,
-                                backgroundColor = Color.White,
-                                keyboardType = KeyboardType.Password,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }
+                    AnimatedVisibility(visible = visible,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()) {
+                        //Tarjeta con esquinas redondeadas para pedir datos
+                        Card(
+                            modifier = Modifier
+                                .height(500.dp)
+                                .animateContentSize(
+                                    animationSpec = tween(
+                                        durationMillis = 2000,
+                                        easing = LinearEasing
+                                    )
                                 ),
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
+                            backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.7f),
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = "Bienvenido",
+                                    style = MaterialTheme.typography.h4,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = "Ingresa tus credenciales",
+                                    style = MaterialTheme.typography.h2,
+                                    color = Color.Black
+                                )
 
-                            //Boton iniciar sesion
-                            Button(
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .width(300.dp)
-                                    .height(80.dp)
-                                    .padding(vertical = 10.dp)
-                                    .clip(RoundedCornerShape(10.dp)).alpha(1.0f),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
-                                enabled = !onProccesing.value,
+                                Spacer(modifier = Modifier.height(30.dp))
+                                /********** EMAIL */
+                                CustomInput(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp),
+                                    textLabel = "Correo electrónico",
+                                    textValue = correo,
+                                    backgroundColor = MaterialTheme.colors.surface,
+                                    keyboardType = KeyboardType.Email,
+                                    keyboardActions = KeyboardActions(
+                                        onNext = {
+
+                                        }),
+                                    traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
+                                    imeAction = ImeAction.Next,
+                                    maxLenght = 40)
+
+                                Spacer(modifier = Modifier.height(10.dp))
+                                /********** PASSWORD */
+                                PasswordInput(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp),
+                                    textLabel = "Password",
+                                    textValue = password,
+                                    backgroundColor = Color.White,
+                                    keyboardType = KeyboardType.Password,
+                                    keyboardActions = KeyboardActions(
+                                        onNext = {
+
+                                        }
+                                    ),
+                                    imeAction = ImeAction.Next,
+                                    maxLenght = 40)
+
+                                //Boton iniciar sesion
+                                Button(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .width(300.dp)
+                                        .height(80.dp)
+                                        .padding(vertical = 10.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .alpha(1.0f),
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
+                                    enabled = !onProccesing.value,
                                     onClick = {
                                         if (checkAvisoPolitica.value) {
                                             if (correo.value.isEmpty()) {
@@ -174,43 +196,47 @@ fun Login(navController: NavController) {
                                             errorMsg.value = "Por favor lea el aviso de privacidad y márquelo como leido"
                                         }//else
                                     }) {
-                                Text(
-                                    text = textoBotonLogin.value,
-                                    color = MaterialTheme.colors.primary,
-                                    style = MaterialTheme.typography.button)
-                                if (onProccesing.value) {
-                                    textoBotonLogin.value = "Iniciando sesión"
-                                    ShowProgressBar()
-                                } else
-                                    textoBotonLogin.value = "Iniciar sesión"
-                            }//Button
+                                    Text(
+                                        text = textoBotonLogin.value,
+                                        color = MaterialTheme.colors.primary,
+                                        style = MaterialTheme.typography.button)
+                                    if (onProccesing.value) {
+                                        textoBotonLogin.value = "Iniciando sesión"
+                                        ShowProgressBar()
+                                    } else
+                                        textoBotonLogin.value = "Iniciar sesión"
+                                }//Button
 
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .height(40.dp)
-                                .clickable {
-                                    if (checkAvisoPolitica.value) {
-                                        navController.navigate(AuthScreens.REGISTER.ruta)
-                                    } else {
-                                        onError.value = true
-                                        errorMsg.value = "Por favor lea el aviso de privacidad y márquelo como leido"
-                                    }//else
-                                },
-                                horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    textAlign = TextAlign.Center,
-                                    text = "¿No tienes cuenta? Regístrate",
-                                    style = MaterialTheme.typography.body1,
-                                    color = MaterialTheme.colors.primary)
-                                Spacer(modifier = Modifier.width(30.dp))
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
-                            PoliticaPrivacidad(
-                                stateCkecked = checkAvisoPolitica.value,
-                                onChecked = { checkAvisoPolitica.value = !checkAvisoPolitica.value })
-                        }//Column
-                }//Card
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .clickable {
+                                        if (checkAvisoPolitica.value) {
+                                            navController.navigate(AuthScreens.REGISTER.ruta)
+                                        } else {
+                                            onError.value = true
+                                            errorMsg.value =
+                                                "Por favor lea el aviso de privacidad y márquelo como leido"
+                                        }//else
+                                    },
+                                    horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = "¿No tienes cuenta? Regístrate",
+                                        style = MaterialTheme.typography.body1,
+                                        color = MaterialTheme.colors.primary)
+                                    Spacer(modifier = Modifier.width(30.dp))
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+                                PoliticaPrivacidad(
+                                    stateCkecked = checkAvisoPolitica.value,
+                                    onChecked = { checkAvisoPolitica.value = !checkAvisoPolitica.value })
+                            }//Column
+                        }//Card
+                    }//AnimateVisivility
+
+
         }) //Box
 
 
