@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PoliticaPrivacidad(stateCkecked: Boolean, onChecked:(Boolean)-> Unit) {
     val annotatedLinkString = buildAnnotatedString {
-        val str = "Ver política de privacidad"
+        val str = " TERMINOS "
         val startIndex = 0
         val endIndex = str.length
         append(str)
@@ -36,17 +36,8 @@ fun PoliticaPrivacidad(stateCkecked: Boolean, onChecked:(Boolean)-> Unit) {
             start = startIndex, end = endIndex)
     }
 
-    val uriHandler = LocalUriHandler.current
-    ClickableText(text = annotatedLinkString,
-        style = MaterialTheme.typography.body1,
-        onClick = { offset ->
-            annotatedLinkString
-                .getStringAnnotations("URL", offset, offset)
-                .firstOrNull()?.let {
-                    uriHandler.openUri(it.item)
-                }
-        })
-    Spacer(modifier = Modifier.height(15.dp))
+
+   // Spacer(modifier = Modifier.height(15.dp))
     Row(modifier = Modifier.clickable { onChecked(stateCkecked)}.height(40.dp).padding(horizontal = 10.dp)) {
         Checkbox(
             checked = stateCkecked,
@@ -58,6 +49,16 @@ fun PoliticaPrivacidad(stateCkecked: Boolean, onChecked:(Boolean)-> Unit) {
             ),
         )
         Spacer(modifier = Modifier.size(10.dp))
-        Text("He leído y acepto los términos", color = MaterialTheme.colors.surface)
+        Text("He leído y acepto los ", color = MaterialTheme.colors.surface)
+        val uriHandler = LocalUriHandler.current
+        ClickableText(text = annotatedLinkString,
+            style = MaterialTheme.typography.body1,
+            onClick = { offset ->
+                annotatedLinkString
+                    .getStringAnnotations("URL", offset, offset)
+                    .firstOrNull()?.let {
+                        uriHandler.openUri(it.item)
+                    }
+            })
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -98,14 +99,15 @@ fun Login(navController: NavController) {
                 )
                     AnimatedVisibility(visible = visible,
                     enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()) {
+                    exit = fadeOut() + fadeOut()
+                    ) {
                         //Tarjeta con esquinas redondeadas para pedir datos
                         Card(
                             modifier = Modifier
-                                .height(500.dp)
+                                .height(600.dp)
                                 .animateContentSize(
                                     animationSpec = tween(
-                                        durationMillis = 2000,
+                                        durationMillis = 1000,
                                         easing = LinearEasing
                                     )
                                 ),
@@ -193,7 +195,7 @@ fun Login(navController: NavController) {
                                             }
                                         } else {
                                             onError.value = true
-                                            errorMsg.value = "Por favor lea el aviso de privacidad y márquelo como leido"
+                                            errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
                                         }//else
                                     }) {
                                     Text(
@@ -202,36 +204,37 @@ fun Login(navController: NavController) {
                                         style = MaterialTheme.typography.button)
                                     if (onProccesing.value) {
                                         textoBotonLogin.value = "Iniciando sesión"
-                                        ShowProgressBar()
+                                        ShowProgressBarLogin()
                                     } else
                                         textoBotonLogin.value = "Iniciar sesión"
                                 }//Button
 
                                 Spacer(modifier = Modifier.height(20.dp))
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
+                                PoliticaPrivacidad(
+                                    stateCkecked = checkAvisoPolitica.value,
+                                    onChecked = { checkAvisoPolitica.value = !checkAvisoPolitica.value })
+
+                               Spacer(modifier = Modifier.height(20.dp))
+                                Row(modifier = Modifier.fillMaxWidth()
+                                    .width(300.dp)
                                     .height(40.dp)
                                     .clickable {
                                         if (checkAvisoPolitica.value) {
                                             navController.navigate(AuthScreens.REGISTER.ruta)
                                         } else {
                                             onError.value = true
-                                            errorMsg.value =
-                                                "Por favor lea el aviso de privacidad y márquelo como leido"
+                                            errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
                                         }//else
                                     },
-                                    horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically) {
                                     Text(
+                                        modifier = Modifier.height(100.dp),
                                         textAlign = TextAlign.Center,
                                         text = "¿No tienes cuenta? Regístrate",
-                                        style = MaterialTheme.typography.body1,
-                                        color = MaterialTheme.colors.primary)
-                                    Spacer(modifier = Modifier.width(30.dp))
+                                        style = MaterialTheme.typography.h2,
+                                        color = MaterialTheme.colors.surface)
                                 }
-                                Spacer(modifier = Modifier.height(20.dp))
-                                PoliticaPrivacidad(
-                                    stateCkecked = checkAvisoPolitica.value,
-                                    onChecked = { checkAvisoPolitica.value = !checkAvisoPolitica.value })
                             }//Column
                         }//Card
                     }//AnimateVisivility
@@ -261,7 +264,7 @@ fun Login(navController: NavController) {
                     }
                     BrohelApp()
                 } else{
-                    ProcessingError(estatusCode = userSesionState.value!!.estatusCode,
+                    ProcessingErrorLogin(estatusCode = userSesionState.value!!.estatusCode,
                         onError = onError,
                         errorMsg = errorMsg)
                 }
@@ -293,7 +296,7 @@ fun Login(navController: NavController) {
 }
 
 @Composable
-fun ShowProgressBar() {
+fun ShowProgressBarLogin() {
     Spacer(modifier = Modifier.padding(horizontal = 16.dp))
     CircularProgressIndicator(
         modifier = Modifier
@@ -304,7 +307,7 @@ fun ShowProgressBar() {
 }
 
 @Composable
-fun ProcessingError(estatusCode: Int, onError: MutableState<Boolean>, errorMsg: MutableState<String>){
+fun ProcessingErrorLogin(estatusCode: Int, onError: MutableState<Boolean>, errorMsg: MutableState<String>){
     when(estatusCode){
         0->{
             onError.value = true
