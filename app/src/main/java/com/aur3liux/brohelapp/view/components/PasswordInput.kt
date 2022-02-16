@@ -38,24 +38,16 @@ fun PasswordInput(modifier: Modifier = Modifier,
                    backgroundColor: Color = Color.White,
                    keyboardType: KeyboardType,
                    keyboardActions: KeyboardActions,
-                   capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
                    imeAction: ImeAction,
                    maxLenght: Int) {
 
     var passwordVisibility = remember { mutableStateOf(false) }
 
-    OutlinedTextField(
-        modifier = modifier.background(backgroundColor).fillMaxWidth(),
-        placeholder = {
-            Text(
-                text = textLabel,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontFamily = FontFamily.Monospace
-            )
-        },
+    TextField(
+        modifier = modifier.fillMaxWidth(),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = Color.Black,
+            backgroundColor = backgroundColor,
             placeholderColor = MaterialTheme.colors.primaryVariant,
             disabledPlaceholderColor = MaterialTheme.colors.primary,
             unfocusedBorderColor = MaterialTheme.colors.primaryVariant,
@@ -72,7 +64,6 @@ fun PasswordInput(modifier: Modifier = Modifier,
             textAlign = TextAlign.Center),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
-            capitalization = capitalization,
             imeAction = imeAction),
         trailingIcon = {
             val image = if (passwordVisibility.value)

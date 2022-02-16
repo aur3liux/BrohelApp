@@ -3,15 +3,13 @@ package com.aur3liux.brohelapp.view.components
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -33,9 +31,8 @@ fun CustomInput(modifier: Modifier = Modifier,
                 traingIcon: @Composable() (()-> Unit)? = null,
                 visualTransformation: VisualTransformation = VisualTransformation.None,
                 maxLenght: Int) {
-    OutlinedTextField(
+    TextField(
         modifier = modifier,
-
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = Color.Black,
             backgroundColor = Color.White,

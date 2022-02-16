@@ -87,7 +87,8 @@ fun Login(navController: NavController) {
 
                     //Tarjeta con esquinas redondeadas para pedir datos
                     Card(
-                        modifier = Modifier.height(500.dp).alpha(0.7f),
+                        modifier = Modifier.height(500.dp),
+                        backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.7f),
                         elevation = 4.dp,
                         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                     ) {
@@ -101,6 +102,15 @@ fun Login(navController: NavController) {
                                     .fillMaxWidth(),
                                 textAlign = TextAlign.Center,
                                 text = "Bienvenido",
+                                style = MaterialTheme.typography.h4,
+                                color = Color.Black
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                text = "Ingresa tus credenciales",
                                 style = MaterialTheme.typography.h2,
                                 color = Color.Black
                             )
@@ -131,7 +141,7 @@ fun Login(navController: NavController) {
                                     .padding(horizontal = 10.dp),
                                 textLabel = "Password",
                                 textValue = password,
-                                backgroundColor = MaterialTheme.colors.surface,
+                                backgroundColor = Color.White,
                                 keyboardType = KeyboardType.Password,
                                 keyboardActions = KeyboardActions(
                                     onNext = {
@@ -148,7 +158,7 @@ fun Login(navController: NavController) {
                                     .width(300.dp)
                                     .height(80.dp)
                                     .padding(vertical = 10.dp)
-                                    .clip(RoundedCornerShape(10.dp)),
+                                    .clip(RoundedCornerShape(10.dp)).alpha(1.0f),
                                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                                 enabled = !onProccesing.value,
                                     onClick = {
@@ -190,7 +200,7 @@ fun Login(navController: NavController) {
                                 horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     textAlign = TextAlign.Center,
-                                    text = "Crear cuenta nueva",
+                                    text = "¿No tienes cuenta? Regístrate",
                                     style = MaterialTheme.typography.body1,
                                     color = MaterialTheme.colors.primary)
                                 Spacer(modifier = Modifier.width(30.dp))
