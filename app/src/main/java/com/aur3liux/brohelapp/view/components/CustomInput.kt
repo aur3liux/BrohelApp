@@ -34,13 +34,10 @@ fun CustomInput(modifier: Modifier = Modifier,
     TextField(
         modifier = modifier,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.Black,
+            textColor = MaterialTheme.colors.surface,
             backgroundColor = Color.White,
             placeholderColor = MaterialTheme.colors.primaryVariant,
             disabledPlaceholderColor = MaterialTheme.colors.primary,
-            unfocusedBorderColor = MaterialTheme.colors.primaryVariant,
-            unfocusedLabelColor = MaterialTheme.colors.primaryVariant,
-            focusedBorderColor = MaterialTheme.colors.secondary, //lineas alrededor al dar push
             cursorColor = MaterialTheme.colors.secondary,   //Color del cursor
             focusedLabelColor = MaterialTheme.colors.secondaryVariant), //texto placeholder al dar push
 

@@ -134,7 +134,7 @@ fun Login(navController: NavController) {
                                         .fillMaxWidth(),
                                     textAlign = TextAlign.Center,
                                     text = "Ingresa tus credenciales",
-                                    style = MaterialTheme.typography.h2,
+                                    style = MaterialTheme.typography.subtitle1,
                                     color = Color.Black
                                 )
 

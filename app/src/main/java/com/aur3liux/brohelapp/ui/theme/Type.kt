@@ -38,6 +38,6 @@ val Typography = Typography(
     subtitle1 = TextStyle(
         fontFamily = QuatroSlabRegular,
         fontWeight = FontWeight.Bold,
-        fontSize = 17.sp
+        fontSize = 15.sp
     )
 )
