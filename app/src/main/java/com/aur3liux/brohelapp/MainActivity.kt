@@ -100,7 +100,7 @@ fun SplashScreen(navController: NavController) {
                     OvershootInterpolator(4f).getInterpolation(it)
                 })
         )
-        delay(500L)
+        delay(2000)
         navController.navigate(InitScreens.CHECK_SESION_STATE.route){
             popUpTo(InitScreens.SPLASH_SCREEN.route){inclusive = true}
         }
