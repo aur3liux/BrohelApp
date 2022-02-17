@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -37,8 +38,17 @@ import java.lang.IllegalStateException
 @Composable
 fun BrohelApp() {
     Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) {
+        isFloatingActionButtonDocked = true,
+        floatingActionButton = {
+            FloatingActionButton(
+                shape = CircleShape,
+                backgroundColor = MaterialTheme.colors.secondary,
+                onClick = {}) {
+                Icon(imageVector = Icons.Filled.Menu,
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.primaryVariant)
+            }},
+        floatingActionButtonPosition = FabPosition.End) {
         val context = LocalContext.current
         Box(
             modifier = Modifier.fillMaxSize(),
