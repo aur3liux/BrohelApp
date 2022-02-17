@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -60,6 +59,10 @@ fun Login(navController: NavController) {
     val dataStore = SesionRepository(context)
     val textoBotonLogin = remember{ mutableStateOf("") }
 
+    //Banderas para validar que no dejen un dato vacío
+    val isVacioNombre = remember{ mutableStateOf(false)}
+    val isVacioPassword = remember{ mutableStateOf(false)}
+
     val authViewModel: AuthViewModel = viewModel(
         factory = LoginViewmodelFactory(authRepository = AuthRepository())
     )
@@ -85,7 +88,6 @@ fun Login(navController: NavController) {
             delay(100)
             visible = true
         } )
-
 
         //Fondo de la pantalla con imagen de fondo
         Box(
@@ -119,61 +121,11 @@ fun Login(navController: NavController) {
                                 modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Center,
-                                    text = "Bienvenido",
-                                    style = MaterialTheme.typography.h4,
-                                    color = Color.Black
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Center,
-                                    text = "Ingresa tus credenciales",
-                                    style = MaterialTheme.typography.subtitle1,
-                                    color = Color.Black
-                                )
-
+                                TextosEncabezado()
                                 Spacer(modifier = Modifier.height(30.dp))
-                                /********** EMAIL */
-                                CustomInput(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp),
-                                    textLabel = "Correo electrónico",
-                                    textValue = correo,
-                                    backgroundColor = MaterialTheme.colors.surface,
-                                    keyboardType = KeyboardType.Email,
-                                    keyboardActions = KeyboardActions(
-                                        onNext = {
-
-                                        }),
-                                    traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-                                    imeAction = ImeAction.Next,
-                                    maxLenght = 40)
-
+                                InputMailLogin(correo = correo, isVacioNombre = isVacioNombre)
                                 Spacer(modifier = Modifier.height(10.dp))
-                                /********** PASSWORD */
-                                PasswordInput(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp),
-                                    textLabel = "Password",
-                                    textValue = password,
-                                    backgroundColor = Color.White,
-                                    keyboardType = KeyboardType.Password,
-                                    keyboardActions = KeyboardActions(
-                                        onNext = {
-
-                                        }
-                                    ),
-                                    imeAction = ImeAction.Next,
-                                    maxLenght = 40)
-
+                                InputPasswordLogin(password = password, isVacioPassword = isVacioPassword)
                                 //Boton iniciar sesion
                                 Button(
                                     modifier = Modifier
@@ -186,17 +138,16 @@ fun Login(navController: NavController) {
                                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                                     enabled = !onProccesing.value,
                                     onClick = {
-                                        if (checkAvisoPolitica.value) {
-                                            if (correo.value.isEmpty()) {
-                                                onError.value = true
-                                                errorMsg.value = "El correo electrónico es obligatorio"
-                                            } else {
+                                        isVacioNombre.value = correo.value.isEmpty()
+                                        isVacioPassword.value = password.value.isEmpty()
+                                        if(!isVacioNombre.value && !isVacioPassword.value){
+                                            if (checkAvisoPolitica.value) {
                                                 onProccesing.value = true
-                                            }
-                                        } else {
-                                            onError.value = true
-                                            errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
-                                        }//else
+                                            } else {
+                                                onError.value = true
+                                                errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
+                                            }//else
+                                        }
                                     }) {
                                     Text(
                                         text = textoBotonLogin.value,
@@ -215,7 +166,8 @@ fun Login(navController: NavController) {
                                     onChecked = { checkAvisoPolitica.value = !checkAvisoPolitica.value })
 
                                Spacer(modifier = Modifier.height(20.dp))
-                                Row(modifier = Modifier.fillMaxWidth()
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
                                     .width(300.dp)
                                     .height(40.dp)
                                     .clickable {
@@ -223,7 +175,8 @@ fun Login(navController: NavController) {
                                             navController.navigate(AuthScreens.REGISTER.ruta)
                                         } else {
                                             onError.value = true
-                                            errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
+                                            errorMsg.value =
+                                                "Lea el aviso de privacidad y márquelo como leido"
                                         }//else
                                     },
                                     horizontalArrangement = Arrangement.Center,
@@ -241,8 +194,6 @@ fun Login(navController: NavController) {
 
 
         }) //Box
-
-
 
         //Observable
         if(onProccesing.value){
@@ -331,3 +282,55 @@ fun ProcessingErrorLogin(estatusCode: Int, onError: MutableState<Boolean>, error
         }
     }
 }
+
+@Composable
+fun TextosEncabezado() {
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        text = "Bienvenido",
+        style = MaterialTheme.typography.h4,
+        color = Color.Black
+    )
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        text = "Ingresa tus credenciales",
+        style = MaterialTheme.typography.subtitle1,
+        color = Color.Black
+    )
+}
+
+@Composable
+fun InputMailLogin(correo: MutableState<String>, isVacioNombre: MutableState<Boolean>) {
+    /********** EMAIL */
+    CustomInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Correo electrónico",
+        textValue = correo,
+        backgroundColor = Color.White,
+        keyboardType = KeyboardType.Email,
+        traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
+        maxLenght = 40, isVacio = isVacioNombre.value)
+}
+
+@Composable
+fun InputPasswordLogin(password: MutableState<String>, isVacioPassword: MutableState<Boolean>) {
+    /********** PASSWORD */
+    PasswordInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Password",
+        textValue = password,
+        backgroundColor = Color.White,
+        keyboardType = KeyboardType.Password,
+        maxLenght = 40, isVacio = isVacioPassword.value)
+}
+

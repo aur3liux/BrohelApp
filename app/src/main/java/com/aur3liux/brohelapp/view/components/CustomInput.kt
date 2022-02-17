@@ -1,11 +1,13 @@
 package com.aur3liux.brohelapp.view.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -25,39 +27,44 @@ fun CustomInput(modifier: Modifier = Modifier,
                 textValue: MutableState<String>,
                 backgroundColor: Color = Color.White,
                 keyboardType: KeyboardType,
-                keyboardActions: KeyboardActions,
                 capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
-                imeAction: ImeAction,
                 traingIcon: @Composable() (()-> Unit)? = null,
                 visualTransformation: VisualTransformation = VisualTransformation.None,
-                maxLenght: Int) {
-    TextField(
-        modifier = modifier,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colors.surface,
-            backgroundColor = Color.White,
-            placeholderColor = MaterialTheme.colors.primaryVariant,
-            disabledPlaceholderColor = MaterialTheme.colors.primary,
-            cursorColor = MaterialTheme.colors.secondary,   //Color del cursor
-            focusedLabelColor = MaterialTheme.colors.secondaryVariant), //texto placeholder al dar push
+                maxLenght: Int,
+                isVacio: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        TextField(
+            modifier = modifier,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = MaterialTheme.colors.surface,
+                backgroundColor = backgroundColor,
+                placeholderColor = MaterialTheme.colors.primaryVariant,
+                disabledPlaceholderColor = MaterialTheme.colors.primaryVariant,
+                cursorColor = MaterialTheme.colors.secondary,   //Color del cursor
+                focusedLabelColor = MaterialTheme.colors.secondaryVariant), //texto placeholder al dar push
 
-        value = textValue.value,
-        label = { Text(textLabel, style = MaterialTheme.typography.body1) },
-        textStyle = TextStyle(
-            fontSize = 19.sp,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            capitalization = capitalization,
-            imeAction = imeAction),
-        trailingIcon = traingIcon,
-        keyboardActions = keyboardActions,
-        visualTransformation = visualTransformation,
-        shape = RoundedCornerShape(10.dp),
-        onValueChange = {
-            if(it.length <= maxLenght){
-                textValue.value = it
-            }
-        })
+            value = textValue.value,
+            label = { Text(textLabel, style = MaterialTheme.typography.body1) },
+            textStyle = TextStyle(
+                fontSize = 19.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                capitalization = capitalization),
+            trailingIcon = traingIcon,
+            visualTransformation = visualTransformation,
+            shape = RoundedCornerShape(10.dp),
+            onValueChange = {
+                if(it.length <= maxLenght){
+                    textValue.value = it
+                }
+            })
+
+        if(isVacio){
+            Text("No deje vacío este dato",
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.primaryVariant)
+        }
+    }
 }

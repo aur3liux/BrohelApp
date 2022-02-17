@@ -14,19 +14,21 @@ val primaryLight = Color(0xFFFFFFFF)
 val primaryDark = Color(0xFF000000)
 val secondaryLight = Color(0xFFC4C4C4)
 val secondaryDark = Color(0xFF9E9E9E)
+val primaryVariantLigth = Color(0xFFDF1E10)
+val primaryVariantDark = Color(0xFFEE991B)
 
 private val DarkColorPalette = darkColors(
     surface = surfaceColorDark,
     secondary = secondaryDark,
     primary = primaryDark,
-    primaryVariant = Purple700,
+    primaryVariant = primaryVariantDark,
 )
 
 private val LightColorPalette = lightColors(
     surface = surfaceColorLigth,
     secondary = secondaryLight,
     primary = primaryLight,
-    primaryVariant = Purple700,
+    primaryVariant = primaryVariantLigth,
 
     /* Other default colors to override
     background = Color.White,

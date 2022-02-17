@@ -61,11 +61,19 @@ fun Registro(onBack: ()-> Unit) {
     val onProccesing = remember{ mutableStateOf(false) }
     val errorMsg = remember { mutableStateOf("") }
     val scaffoldState = rememberScaffoldState()
+
+    val dataStore = SesionRepository(context)
+
     val nombre = rememberSaveable{ mutableStateOf("") }
     val correo = rememberSaveable{ mutableStateOf("") }
     val password = rememberSaveable{ mutableStateOf("") }
     val confirm = rememberSaveable{ mutableStateOf("") }
-    val dataStore = SesionRepository(context)
+
+    //Banderas para validar que no dejen datos vacíos
+    val isNombreVacio = remember{ mutableStateOf(false)}
+    val isCorreoVacio = remember{ mutableStateOf(false)}
+    val isPasswordVacio = remember{ mutableStateOf(false)}
+    val isPasswordConfirmVacio = remember{ mutableStateOf(false)}
     val textoBotonLogin = remember{ mutableStateOf("") }
 
     val authViewModel: AuthViewModel = viewModel(
@@ -113,7 +121,8 @@ fun Registro(onBack: ()-> Unit) {
                 verticalArrangement = Arrangement.Bottom) {
                     //Buton flecha back
                     IconButton(
-                        modifier = Modifier.clip(CircleShape)
+                        modifier = Modifier
+                            .clip(CircleShape)
                             .scale(scale = inScale.value)
                             .background(MaterialTheme.colors.surface)
                             .padding(horizontal = 10.dp),
@@ -136,100 +145,15 @@ fun Registro(onBack: ()-> Unit) {
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Registrate",
-                                style = MaterialTheme.typography.h4,
-                                color = Color.Black
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = "Crea tu cuenta",
-                                style = MaterialTheme.typography.subtitle1,
-                                color = Color.Black
-                            )
+                            TextosEncabezadoRegistro()
                             Spacer(modifier = Modifier.height(30.dp))
-
-                            /********** NOMBRE */
-                            CustomInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Nombre",
-                                textValue = nombre,
-                                backgroundColor = MaterialTheme.colors.surface,
-                                capitalization = KeyboardCapitalization.Words,
-                                keyboardType = KeyboardType.Text,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }),
-                                traingIcon = { Icon(Icons.Filled.People, contentDescription = "") },
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
-
+                            InputNombreRegistro(nombre = nombre, isNombreVacio = isNombreVacio)
                             Spacer(modifier = Modifier.height(10.dp))
-
-                            /********** EMAIL */
-                            CustomInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Correo electrónico",
-                                textValue = correo,
-                                backgroundColor = MaterialTheme.colors.surface,
-                                keyboardType = KeyboardType.Email,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }),
-                                traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
-
+                            InputCorreoRegstro(correo = correo, isCorreoVacio = isCorreoVacio)
                             Spacer(modifier = Modifier.height(10.dp))
-
-                            /********** PASSWORD */
-                            PasswordInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Contraseña",
-                                textValue = password,
-                                backgroundColor = Color.White,
-                                keyboardType = KeyboardType.Password,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }
-                                ),
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
-
+                            InputPasswordRegistro(password = password, isPwdVacio = isPasswordVacio)
                             Spacer(modifier = Modifier.height(10.dp))
-
-                            /********** CONFIRM PASSWORD */
-                            PasswordInput(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                textLabel = "Confirma contraseña",
-                                textValue = confirm,
-                                backgroundColor = Color.White,
-                                keyboardType = KeyboardType.Password,
-                                keyboardActions = KeyboardActions(
-                                    onNext = {
-
-                                    }
-                                ),
-                                imeAction = ImeAction.Next,
-                                maxLenght = 40)
+                            InputConfirmPasswordRegistro(confirm = confirm, isConfirmVacio = isPasswordConfirmVacio)
 
                             //Boton iniciar sesion
                             Button(
@@ -243,7 +167,18 @@ fun Registro(onBack: ()-> Unit) {
                                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                                 enabled = !onProccesing.value,
                                 onClick = {
-
+                                    isNombreVacio.value = nombre.value.isEmpty()
+                                    isCorreoVacio.value = correo.value.isEmpty()
+                                    isPasswordVacio.value = password.value.isEmpty()
+                                    isPasswordConfirmVacio.value = confirm.value.isEmpty()
+                                    if(!isNombreVacio.value && !isCorreoVacio.value && ! isPasswordVacio.value){
+                                        if(password.value.equals(confirm.value)){
+                                            //AQUI SE GUARDARAN LOS DATOS DE LA CUENTA
+                                        }else{
+                                            onError.value = true
+                                            errorMsg.value = "El password y su confirmación no coincide"
+                                        }
+                                    }
                                 }) {
                                 Text(
                                     text = textoBotonLogin.value,
@@ -313,6 +248,91 @@ fun Registro(onBack: ()-> Unit) {
             })
         }
     }//Scaffold
+}
+
+
+/************ Textos encabezado **/
+@Composable
+fun TextosEncabezadoRegistro() {
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        text = "Registrate",
+        style = MaterialTheme.typography.h4,
+        color = Color.Black
+    )
+    Text(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        text = "Crea tu cuenta",
+        style = MaterialTheme.typography.subtitle1,
+        color = Color.Black
+    )
+}
+
+/********** NOMBRE */
+@Composable
+fun InputNombreRegistro(nombre: MutableState<String>, isNombreVacio: MutableState<Boolean>) {
+    CustomInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Nombre",
+        textValue = nombre,
+        backgroundColor = Color.White,
+        capitalization = KeyboardCapitalization.Words,
+        keyboardType = KeyboardType.Text,
+        traingIcon = { Icon(Icons.Filled.People, contentDescription = "") },
+        maxLenght = 40, isVacio = isNombreVacio.value)
+}
+
+/********** EMAIL */
+@Composable
+fun InputCorreoRegstro(correo: MutableState<String>, isCorreoVacio: MutableState<Boolean>) {
+    CustomInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Correo electrónico",
+        textValue = correo,
+        backgroundColor = Color.White,
+        keyboardType = KeyboardType.Email,
+        traingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
+        maxLenght = 40, isVacio = isCorreoVacio.value)
+}
+
+
+/********** PASSWORD */
+@Composable
+fun InputPasswordRegistro(password: MutableState<String>, isPwdVacio: MutableState<Boolean>) {
+    PasswordInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Contraseña",
+        textValue = password,
+        backgroundColor = Color.White,
+        keyboardType = KeyboardType.Password,
+        maxLenght = 40, isVacio = isPwdVacio.value)
+}
+
+/********** CONFIRM PASSWORD */
+@Composable
+fun InputConfirmPasswordRegistro(confirm: MutableState<String>, isConfirmVacio: MutableState<Boolean>) {
+    PasswordInput(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        textLabel = "Confirma contraseña",
+        textValue = confirm,
+        backgroundColor = Color.White,
+        keyboardType = KeyboardType.Password,
+        maxLenght = 40,
+        isConfirmVacio.value)
 }
 
 @Composable
