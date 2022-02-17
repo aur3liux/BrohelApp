@@ -1,13 +1,17 @@
 package com.aur3liux.brohelapp
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -45,6 +49,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            @Suppress("DEPRECATION")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.hide(WindowInsets.Type.statusBars())
+            } else {
+                window.setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                )
+            }
+
             TransparentStatusBar(windows = window)
             val navController = rememberNavController()
 
@@ -78,7 +92,7 @@ fun checkSesionstate(
 
     estatus?.let {
         if(it){
-            Log.i("SESION ACTIVA", it.toString())
+            BrohelApp()
         } else{
             AuthApp()
         }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BrohelApp</string>
+    <string name="google_maps_key">AIzaSyBAehQhiNgNBlACHUnDuIR_umibXAbJnuc</string>
 </resources>

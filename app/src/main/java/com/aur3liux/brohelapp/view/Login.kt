@@ -126,6 +126,7 @@ fun Login(navController: NavController) {
                                 InputMailLogin(correo = correo, isVacioNombre = isVacioNombre)
                                 Spacer(modifier = Modifier.height(10.dp))
                                 InputPasswordLogin(password = password, isVacioPassword = isVacioPassword)
+
                                 //Boton iniciar sesion
                                 Button(
                                     modifier = Modifier
@@ -138,7 +139,8 @@ fun Login(navController: NavController) {
                                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                                     enabled = !onProccesing.value,
                                     onClick = {
-                                        isVacioNombre.value = correo.value.isEmpty()
+                                        onProccesing.value = true
+                                        /*isVacioNombre.value = correo.value.isEmpty()
                                         isVacioPassword.value = password.value.isEmpty()
                                         if(!isVacioNombre.value && !isVacioPassword.value){
                                             if (checkAvisoPolitica.value) {
@@ -147,7 +149,7 @@ fun Login(navController: NavController) {
                                                 onError.value = true
                                                 errorMsg.value = "Lea el aviso de privacidad y márquelo como leido"
                                             }//else
-                                        }
+                                        }*/
                                     }) {
                                     Text(
                                         text = textoBotonLogin.value,
@@ -197,11 +199,18 @@ fun Login(navController: NavController) {
 
         //Observable
         if(onProccesing.value){
-            LaunchedEffect(key1 = Unit, block = {
+            GlobalScope.launch {
+                dataStore.setSignInStatus(true)
+                dataStore.setTokenUser("123456")
+                dataStore.setEmailUser("correo@server.com")
+            }
+            BrohelApp()
+            /*LaunchedEffect(key1 = Unit, block = {
                 val jsonObj = JSONObject()
                 jsonObj.put("Email", correo.value)
                 jsonObj.put("password", password)
                 authViewModel.LoginUser(context = context, jsonObj = jsonObj)
+
                 delay(700)
             })
 
@@ -219,7 +228,7 @@ fun Login(navController: NavController) {
                         onError = onError,
                         errorMsg = errorMsg)
                 }
-            }
+            } */
         }//if
 
         if(onError.value){
