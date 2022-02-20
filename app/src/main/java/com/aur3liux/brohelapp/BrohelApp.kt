@@ -1,18 +1,12 @@
 package com.aur3liux.brohelapp
 
 import android.content.Context
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -21,7 +15,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleObserver
-import com.aur3liux.brohelapp.view.OpcionesCuenta
+import com.aur3liux.brohelapp.ui.theme.BottomSheetShape
+import com.aur3liux.brohelapp.view.Cuenta
+import com.aur3liux.brohelapp.view.components.BottomSheetWithCloseDialog
+import com.aur3liux.brohelapp.view.components.Configuracion
+import com.aur3liux.brohelapp.view.components.InfoLegal
 import com.aur3liux.brohelapp.view.components.floatingmenu.FabIcon
 import com.aur3liux.brohelapp.view.components.floatingmenu.FabOption
 import com.aur3liux.brohelapp.view.components.floatingmenu.ItemData
@@ -32,78 +30,105 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
+
+sealed class BottomSheetScreen() {
+    object Cuenta: BottomSheetScreen()
+    object Configuracion: BottomSheetScreen()
+    class InfoLegal(val argument:String):BottomSheetScreen()
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BrohelApp() {
-    var openMenuCuenta = remember { mutableStateOf(false)}
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
-    Scaffold(
-        isFloatingActionButtonDocked = true,
-        floatingActionButton = {
-             ItemFloatingActionButton(
-                 items = listOf(
-                     ItemData(
-                         id = 1,
-                         iconRes = R.drawable.ic_biker,
-                         label = "Perfil"
-                     ),
-                     ItemData(
-                         id = 2,
-                         iconRes = R.drawable.ic_config,
-                         label = "Configuración"
-                     ),
-                     ItemData(
-                         id = 3,
-                         iconRes = R.drawable.ic_legal,
-                         label = "Información legal"
-                     )
-                 ),
-                 fabIcon = FabIcon(
-                     iconRes = R.drawable.ic_menu,
-                     iconRotate = 45f),
-                 onFabItemClicked = {
-                     Log.i("CLICK", it.label)
-                 },
-                fabOption = FabOption(
-                    iconTint = Color.Black,
-                    showLabel = true))
-          },
-        floatingActionButtonPosition = FabPosition.End
-        ){
-        
-        val context = LocalContext.current
-        Box(
-            modifier = Modifier.fillMaxSize()) {
-                ShowMap(context = context) {
-            }//Box
+    var currentBottomSheet: BottomSheetScreen? by remember{
+        mutableStateOf(null)
+    }
+
+    if(scaffoldState.bottomSheetState.isCollapsed)
+        currentBottomSheet = null
+
+    val openSheet: (BottomSheetScreen) -> Unit = {
+        scope.launch {
+            currentBottomSheet = it
+            scaffoldState.bottomSheetState.expand() }
+    }
+
+    val closeSheet: () -> Unit = {
+        scope.launch {
+            scaffoldState.bottomSheetState.collapse()
         }
+    }
 
-        //Boton para acceder a la cuenta
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-            horizontalArrangement = Arrangement.End) {
-            //Boton perfilk
-            IconButton(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colors.primary)
-                    .padding(10.dp),
-                onClick = {
-                    openMenuCuenta.value = true
-                }) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    tint = MaterialTheme.colors.surface,
-                    contentDescription = "")
-            }//IconButton
-
-            if(openMenuCuenta.value){
-                OpcionesCuenta(onDismiss = {openMenuCuenta.value = false}){}
+    BottomSheetScaffold(sheetPeekHeight = 0.dp, scaffoldState = scaffoldState,
+        sheetShape = BottomSheetShape,
+        sheetContent = {
+            currentBottomSheet?.let { currentSheet ->
+                SheetLayout(currentSheet,closeSheet)
             }
-        }//Row
-    }//Scaffold
+        }) { paddingValues ->
+
+        Scaffold(
+            isFloatingActionButtonDocked = true,
+            floatingActionButton = {
+                ItemFloatingActionButton(
+                    items = listOf(
+                        ItemData(
+                            id = 1,
+                            iconRes = R.drawable.ic_biker,
+                            label = "Perfil"
+                        ),
+                        ItemData(
+                            id = 2,
+                            iconRes = R.drawable.ic_config,
+                            label = "Configuración"
+                        ),
+                        ItemData(
+                            id = 3,
+                            iconRes = R.drawable.ic_legal,
+                            label = "Información legal"
+                        )
+                    ),
+                    fabIcon = FabIcon(
+                        iconRes = R.drawable.ic_menu,
+                        iconRotate = 45f),
+                    onFabItemClicked = {
+                        when(it.id){
+                            1->{
+                                openSheet(BottomSheetScreen.Cuenta)
+                            }
+                            2->{
+                                openSheet(BottomSheetScreen.Configuracion)
+                            }
+                            3->{
+                                openSheet(BottomSheetScreen.InfoLegal("Ok aqui hay algo"))
+                            }
+                        }
+                        Log.i("CLICK", it.label)
+                    },
+                    fabOption = FabOption(
+                        iconTint = Color.Blue,
+                        showLabel = true))
+            },
+            floatingActionButtonPosition = FabPosition.End
+        ){
+
+            val context = LocalContext.current
+            Box(
+                modifier = Modifier.fillMaxSize()) {
+                ShowMap(context = context) {
+                }//Box
+            }
+        }//Scaffold
+
+    }//BottomSheet
+
+
 }//BrohelApp
 
 
@@ -169,8 +194,14 @@ fun rememberMapLifecycle(map: MapView): LifecycleObserver {
     }
 }
 
-private fun getAddress(context: Context, lat: Double, lng: Double): String? {
-    val geocoder = Geocoder(context)
-    val list = geocoder.getFromLocation(lat,lng,1)
-    return list[0].getAddressLine(0)
+@Composable
+fun SheetLayout(currentScreen: BottomSheetScreen,onCloseBottomSheet :()->Unit) {
+    BottomSheetWithCloseDialog(onCloseBottomSheet){
+        when(currentScreen){
+            BottomSheetScreen.Cuenta -> Cuenta()
+            BottomSheetScreen.Configuracion -> Configuracion()
+            is BottomSheetScreen.InfoLegal -> InfoLegal(argument = currentScreen.argument)
+        }
+
+    }
 }
